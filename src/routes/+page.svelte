@@ -3,12 +3,9 @@
 
 	let fileName = 'test.pdf';
 	let iframeKey = 0;
-	$: route = `api/pdf/${fileName}?key=${iframeKey}`;
+	let debounce: NodeJS.Timeout;
 
-	const updatePreview = () => {
-		fileName = Math.random().toString(36).substring(7) + '.pdf';
-		iframeKey += 1;
-	};
+	$: route = `api/pdf/${fileName}?key=${iframeKey}`;
 
 	onMount(() => {
 		console.log('Mounted');
@@ -23,9 +20,17 @@
 	<div>
 		<h1>Welcome to SvelteKit</h1>
 		<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-
-		<input type="text" bind:value={fileName} />
+		<input
+			type="text"
+			on:input={(e) => {
+				clearTimeout(debounce);
+				debounce = setTimeout(() => {
+					// @ts-ignore
+					fileName = e?.target?.value || '';
+					iframeKey += 1;
+				}, 500);
+			}}
+		/>
 	</div>
-
-	<iframe title="PDF Preview" src={route} frameborder="0" width="100%" height="100%" />
+	<iframe title="PDF Preview" src={route} frameborder="0" width="50%" height="100%" />
 </div>
