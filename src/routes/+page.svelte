@@ -16,11 +16,12 @@
 	});
 </script>
 
-<div style="display: flex; justify-content: center; width: 100%; height: 100vh;">
-	<div>
+<div class="flex items-center justify-between h-screen">
+	<div class="flex items-center justify-center flex-col">
 		<h1>Welcome to SvelteKit</h1>
 		<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 		<input
+			class="bg-slate-200 px-4 py-2 border border-slate-300 rounded-md w-80 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
 			type="text"
 			on:input={(e) => {
 				clearTimeout(debounce);
