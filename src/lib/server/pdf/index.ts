@@ -7,6 +7,7 @@ import type {
 	TFontDictionary
 } from 'pdfmake/interfaces';
 import { text } from '@sveltejs/kit';
+import type { EmployeeInfo, ServiceRecord } from '$lib/types';
 
 const fonts: TFontDictionary = {
 	Roboto: {
@@ -55,10 +56,15 @@ const fonts: TFontDictionary = {
 	}
 };
 
+// format of the pdf  
+
+
 const printer = new PdfPrinter(fonts);
 
 export const generatePDF = async (
-	recordId: string,
+	doc: ServiceRecord,
+	info: EmployeeInfo,
+
 	metadata?: TDocumentInformation
 ): Promise<Blob> => {
 	const file: TDocumentDefinitions = {
@@ -117,17 +123,101 @@ export const generatePDF = async (
 				italics: true
 			},
 			{
-				text: ['Station No: ', { text: recordId, fontSize: 15, decoration: 'underline' }],
+				text: ['Station No: ', { text: doc.stationnum, fontSize: 12, decoration: 'underline' }],
+				fontSize: 14,
 				alignment: 'right'
 			},
 			{
-				text: ['Employee No: ', { text: recordId, fontSize: 15, decoration: 'underline' }],
+				text: ['Employee No: ', { text: doc.empnum, fontSize: 12, decoration: 'underline' }],
+				fontSize: 14,
 				alignment: 'right'
 			},
 			{
-				text: ['GSIS BP No: ', { text: recordId, fontSize: 15, decoration: 'underline' }],
+				text: ['GSIS BP No: ',  { text: doc.gsis, fontSize: 12, decoration: 'underline' }],
+				fontSize: 14,
 				alignment: 'right'
-			}
+				
+			},
+			{
+				text: 'Name:		',
+				bold: true,
+				fontSize: 14,
+				alignment: 'left',
+				absolutePosition: {x: 30, y:300}
+			},
+			{
+				stack: [
+					{text:	[`${info.lastName}`],absolutePosition: {x: 100, y: 303}},
+					{ text: [`${info.firstName}`], absolutePosition: {x: 220, y: 303}},
+					{ text: [`${info.middleName}`], absolutePosition: {x: 350, y: 303}},
+
+				],
+				fontSize: 12,
+				alignment: 'left',
+                marginBottom: 5,
+			},
+			{
+				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:295},italics: true, alignment: 'right'
+			},
+			{
+				canvas:[{type: 'line',x1: 50, y1: 17, x2: 400, y2: 17 }]
+			},
+			{
+				stack: [
+					{text:	[`(Surname)`],absolutePosition: {x: 100, y: 316.50}},
+					{ text: [`(Given Name)`], absolutePosition: {x: 220, y: 316.50}},
+					{ text: [`(Middle Name)`], absolutePosition: {x: 350, y: 316.50}},
+				],
+				font: 'Courier',
+				fontSize: 8,
+				alignment: 'left',
+				italics: true,
+			},
+			{
+				text: 'Birth:		',
+				bold: true,
+				fontSize: 14,
+				alignment: 'left',
+				absolutePosition: {x: 30, y:325}
+			},
+			{
+				stack: [
+					{text:	info.birthdate.toISOString(),absolutePosition: {x: 100, y: 327}},
+					{ text: [`${info.placeOfBirth}`], absolutePosition: {x: 280, y: 327}},
+				],
+				fontSize: 12,
+				alignment: 'left',
+                marginBottom: 5,	
+			},
+			{
+				canvas:[{type: 'line',x1: 50, y1: 20, x2: 400, y2: 20 }]
+			},
+			{
+				stack: [
+					{text:	[`(Date)`],absolutePosition: {x: 100, y: 340}},
+					{ text: [`(Place)`], absolutePosition: {x: 280, y: 340}},
+				],
+				font: 'Courier',
+				fontSize: 8,
+				alignment: 'left',
+				italics: true,
+			},
+			{
+				text:'(Date herein should be checked from birth or baptismal certificate or other reliable documents.)', fontSize: 7, absolutePosition: {x:430, y:317},italics: true, alignment: 'right'
+			},
+			{
+				stack: [
+					{text:'This is to certify that the employee named herein above actually rendered service in this office as shown by the service record below,'},
+					{text: 'each line of which is supported by appointment and other papers actually issued by this office and approved by the authorities concerned'}
+
+				],
+				font: 'Calibri',
+				fontSize: 9,
+				alignment: 'center',
+				absolutePosition:{x:22, y:353}
+			},
+
+			
 		],
 		styles: {
 			header: {
@@ -144,7 +234,8 @@ export const generatePDF = async (
 			},
 			small: {
 				fontSize: 8
-			}
+			},
+	
 		},
 		defaultStyle: {
 			font: 'Calibri'
@@ -156,13 +247,12 @@ export const generatePDF = async (
 		pdf
 			.pipe(blobStream())
 			.on('finish', function (this: IBlobStream) {
-				console.log('Finished creating PDF with id', recordId);
 				resolve(this.toBlob('application/pdf'));
 			})
 			.on('error', (err) => {
-				console.log('Error creating PDF with id', recordId);
 				reject(err);
 			});
 		pdf.end();
 	});
 };
+ 
