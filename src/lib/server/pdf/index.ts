@@ -105,7 +105,10 @@ export const generatePDF = async (
 				bold: true,
 				alignment: 'center'
 			},
-			'_____________________________________________________________________________________',
+			{
+				canvas:[{type: 'line',x1: 15, y1: 0, x2: 520, y2: 0 }],
+				alignment: 'center'
+			},
 			{
 				text: 'SERVICE RECORD',
 				font: 'Times',
@@ -143,13 +146,13 @@ export const generatePDF = async (
 				bold: true,
 				fontSize: 14,
 				alignment: 'left',
-				absolutePosition: {x: 30, y:300}
+				absolutePosition: {x: 30, y:280}
 			},
 			{
 				stack: [
-					{text:	[`${info.lastName}`],absolutePosition: {x: 100, y: 303}},
-					{ text: [`${info.firstName}`], absolutePosition: {x: 220, y: 303}},
-					{ text: [`${info.middleName}`], absolutePosition: {x: 350, y: 303}},
+					{text:	[`${info.lastName}`],absolutePosition: {x: 100, y: 280}},
+					{ text: [`${info.firstName}`], absolutePosition: {x: 220, y: 280}},
+					{ text: [`${info.middleName}`], absolutePosition: {x: 350, y: 280}},
 
 				],
 				fontSize: 12,
@@ -157,16 +160,16 @@ export const generatePDF = async (
                 marginBottom: 5,
 			},
 			{
-				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:295},italics: true, alignment: 'right'
+				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:279},italics: true, alignment: 'right'
 			},
 			{
-				canvas:[{type: 'line',x1: 50, y1: 17, x2: 400, y2: 17 }]
+				canvas:[{type: 'line',x1: 50, y1: 9.50, x2: 400, y2: 9.50 }]
 			},
 			{
 				stack: [
-					{text:	[`(Surname)`],absolutePosition: {x: 100, y: 316.50}},
-					{ text: [`(Given Name)`], absolutePosition: {x: 220, y: 316.50}},
-					{ text: [`(Middle Name)`], absolutePosition: {x: 350, y: 316.50}},
+					{text:	[`(Surname)`],absolutePosition: {x: 100, y: 299}},
+					{ text: [`(Given Name)`], absolutePosition: {x: 220, y: 299}},
+					{ text: [`(Middle Name)`], absolutePosition: {x: 350, y: 299}},
 				],
 				font: 'Courier',
 				fontSize: 8,
@@ -178,24 +181,24 @@ export const generatePDF = async (
 				bold: true,
 				fontSize: 14,
 				alignment: 'left',
-				absolutePosition: {x: 30, y:325}
+				absolutePosition: {x: 30, y:312}
 			},
 			{
 				stack: [
-					{text:	info.birthdate.toISOString(),absolutePosition: {x: 100, y: 327}},
-					{ text: [`${info.placeOfBirth}`], absolutePosition: {x: 280, y: 327}},
+					{text:	info.birthdate.toISOString(),absolutePosition: {x: 100, y: 312}},
+					{ text: [`${info.placeOfBirth}`], absolutePosition: {x: 280, y: 312}},
 				],
 				fontSize: 12,
 				alignment: 'left',
                 marginBottom: 5,	
 			},
 			{
-				canvas:[{type: 'line',x1: 50, y1: 20, x2: 400, y2: 20 }]
+				canvas:[{type: 'line',x1: 50, y1: 25, x2: 400, y2: 25 }]
 			},
 			{
 				stack: [
-					{text:	[`(Date)`],absolutePosition: {x: 100, y: 340}},
-					{ text: [`(Place)`], absolutePosition: {x: 280, y: 340}},
+					{text:	[`(Date)`],absolutePosition: {x: 100, y: 330}},
+					{ text: [`(Place)`], absolutePosition: {x: 280, y: 330}},
 				],
 				font: 'Courier',
 				fontSize: 8,
@@ -203,7 +206,7 @@ export const generatePDF = async (
 				italics: true,
 			},
 			{
-				text:'(Date herein should be checked from birth or baptismal certificate or other reliable documents.)', fontSize: 7, absolutePosition: {x:430, y:317},italics: true, alignment: 'right'
+				text:'(Date herein should be checked from birth or baptismal certificate or other reliable documents.)', fontSize: 7, absolutePosition: {x:430, y:306},italics: true, alignment: 'right'
 			},
 			{
 				stack: [
@@ -214,7 +217,28 @@ export const generatePDF = async (
 				font: 'Calibri',
 				fontSize: 9,
 				alignment: 'center',
-				absolutePosition:{x:22, y:353}
+				absolutePosition:{x:22, y:340}
+			},
+			{
+				canvas:[{type: 'line',x1: 15, y1: 423, x2: 520, y2: 423 }],
+				alignment: 'center'
+			},
+			{
+				image: 'src/lib/assets/images/DepEd-MATATAG_BagongPilipinas.png',
+				alignment: 'left',
+				height: 100,
+				width: 200,
+				absolutePosition: {x:30,y:750}
+			},
+			{
+				image: 'src/lib/assets/images/deped-official-seal.png',
+				alignment: 'left',
+				height: 100,
+				width: 100,
+				absolutePosition: {x:245,y:748}
+			},
+			{
+				image: 'src/lib/assets/icons/home.png'
 			},
 
 			
