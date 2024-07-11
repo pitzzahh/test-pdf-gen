@@ -1,12 +1,10 @@
 import PdfPrinter from 'pdfmake';
-import depedLogo from '$lib/assets/images/deped-official-seal.png';
 import blobStream, { type IBlobStream } from 'blob-stream';
 import type {
 	TDocumentDefinitions,
 	TDocumentInformation,
 	TFontDictionary
 } from 'pdfmake/interfaces';
-import { text } from '@sveltejs/kit';
 import type { EmployeeInfo, ServiceRecord } from '$lib/types';
 
 const fonts: TFontDictionary = {
@@ -53,19 +51,28 @@ const fonts: TFontDictionary = {
 	},
 	ZapfDingbats: {
 		normal: 'ZapfDingbats'
+	},
+	ArialNarrow:{
+		normal: 'src/lib/assets/fonts/arial-narrow.ttf',
+		bold: 'src/lib/assets/fonts/arial-narrow-bold.ttf',
+		italics: 'src/lib/assets/fonts/arial-narrow-italic.ttf'
 	}
 };
 
-// format of the pdf  
 
+type Alignment = 'center' | 'right'
+type TableData = {
+	text: string,
+	alignment: Alignment
+}
 
 const printer = new PdfPrinter(fonts);
 
 export const generatePDF = async (
 	doc: ServiceRecord,
 	info: EmployeeInfo,
-
-	metadata?: TDocumentInformation
+	data: TableData[][],
+	metadata?: TDocumentInformation,
 ): Promise<Blob> => {
 	const file: TDocumentDefinitions = {
 		info: metadata,
@@ -117,7 +124,7 @@ export const generatePDF = async (
 			},
 			{
 				text: '(To be accomplished by the employer)',
-				font: 'Courier',
+				font: 'ArialNarrow',
 				fontSize: 8,
 				alignment: 'center',
 				italics: true
@@ -168,7 +175,7 @@ export const generatePDF = async (
 					{ text: [`(Given Name)`], absolutePosition: {x: 220, y: 316.50}},
 					{ text: [`(Middle Name)`], absolutePosition: {x: 350, y: 316.50}},
 				],
-				font: 'Courier',
+				font: 'ArialNarrow',
 				fontSize: 8,
 				alignment: 'left',
 				italics: true,
@@ -197,7 +204,7 @@ export const generatePDF = async (
 					{text:	[`(Date)`],absolutePosition: {x: 100, y: 340}},
 					{ text: [`(Place)`], absolutePosition: {x: 280, y: 340}},
 				],
-				font: 'Courier',
+				font: 'ArialNarrow',
 				fontSize: 8,
 				alignment: 'left',
 				italics: true,
@@ -211,10 +218,38 @@ export const generatePDF = async (
 					{text: 'each line of which is supported by appointment and other papers actually issued by this office and approved by the authorities concerned'}
 
 				],
-				font: 'Calibri',
+				font: 'ArialNarrow',
 				fontSize: 9,
 				alignment: 'center',
-				absolutePosition:{x:22, y:353}
+				absolutePosition:{x:22, y:353},
+		
+			},
+			{
+				table: {	
+					widths:[20,32,'*','*','*','*','*',40],
+					body: [
+						[{text:'SERVICE', colSpan:2, font:'ArialNarrow',fontSize:11,alignment:'center', bold:true}, {},
+						 {text:'RECORD OF APPOINTMENT',colSpan:3,font:'ArialNarrow',fontSize:11, alignment:'center',bold:true},{},{},
+						 {text:'OFFICE/ENTITY',alignment:'center',font:'ArialNarrow',fontSize:11, bold:true},
+						 {text:'\nSOURCE\nOF\nFUND',rowSpan:3,font:'ArialNarrow', alignment:'center',fontSize:11, bold:true},
+						 {text:'\n\nREMARKS', rowSpan:3,font:'ArialNarrow', alignment:'center',fontSize:11, bold:true}
+						],
+						[{text:'Inclusive Date', colSpan:2,alignment:'center'},{},
+						 {text:'\nPOSITON', rowSpan:2,alignment:'center'}, 
+						 {text:'STATUS'},
+						 {text:'SALARY'},
+						 {text:'DIV/STATION/PLACE\nOF\nASSIGNMENT', rowSpan:2, alignment:'center'},{},{}
+						],
+						[{text:'TO',alignment:'center'},
+						 {text:'FROM',alignment:'center'},{},
+						 {text:'1',alignment:'center'},{text:'2',alignment:'center'	},{},{},{}
+						],
+						...data
+					]
+				},
+	
+					alignment:'center',
+					absolutePosition:{x:30,y:375}
 			},
 
 			
@@ -235,6 +270,9 @@ export const generatePDF = async (
 			small: {
 				fontSize: 8
 			},
+			table: {
+				font: 'ArialNarrow'
+			}
 	
 		},
 		defaultStyle: {

@@ -32,7 +32,7 @@ export const GET = async ({ params }) => {
 	}
 	
 //should not be duplicate
-	const pdf = await generatePDF(doc,info, metadata);
+	const pdf = await generatePDF(doc,info, [] ,metadata);
 
 	return new Response(pdf, {
 		status: 200,
