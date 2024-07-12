@@ -85,6 +85,7 @@ export const generatePDF = async (
 				height: 100,
 				width: 100
 			},
+
 			{
 				text: 'Reupublic of the philippines',
 				font: 'OldEnglish',
@@ -339,6 +340,15 @@ export const generatePDF = async (
 				width: 98,
 				absolutePosition: {x:245,y:740}
 			},
+
+			{
+				image: 'src/lib/assets/images/SDO.png',
+				alignment: 'right',
+				height: 50,
+				width: 100,
+				absolutePosition: {x: 20, y:755}
+			},
+
 			{
 				image: 'src/lib/assets/icons/home.png', absolutePosition:{x:360, y:745},
 				height: 18,
@@ -372,6 +382,7 @@ export const generatePDF = async (
 				alignment: 'left',
 				italics: true,
 			},
+			
 			
 			
 			
