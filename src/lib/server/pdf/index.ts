@@ -5,7 +5,7 @@ import type {
 	TDocumentInformation,
 	TFontDictionary
 } from 'pdfmake/interfaces';
-import type { EmployeeInfo, ServiceRecord } from '$lib/types';
+import type { EmployeeInfo, ServiceRecord, VerifiedBy} from '$lib/types';
 
 const fonts: TFontDictionary = {
 	Roboto: {
@@ -71,6 +71,7 @@ const printer = new PdfPrinter(fonts);
 export const generatePDF = async (
 	doc: ServiceRecord,
 	info: EmployeeInfo,
+	VeriBy: VerifiedBy,
 	data: TableData[][],
 	metadata?: TDocumentInformation,
 ): Promise<Blob> => {
@@ -84,6 +85,7 @@ export const generatePDF = async (
 				height: 100,
 				width: 100
 			},
+
 			{
 				text: 'Reupublic of the philippines',
 				font: 'OldEnglish',
@@ -227,28 +229,6 @@ export const generatePDF = async (
 				absolutePosition:{x:22, y:340}
 			},
 			{
-				canvas:[{type: 'line',x1: 15, y1: 423, x2: 520, y2: 423 }],
-				alignment: 'center'
-			},
-			{
-				image: 'src/lib/assets/images/DepEd-MATATAG_BagongPilipinas.png',
-				alignment: 'left',
-				height: 100,
-				width: 200,
-				absolutePosition: {x:30,y:750}
-			},
-			{
-				image: 'src/lib/assets/images/deped-official-seal.png',
-				alignment: 'left',
-				height: 100,
-				width: 100,
-				absolutePosition: {x:245,y:748}
-			},
-			{
-				image: 'src/lib/assets/icons/home.png',
-				absolutePosition:{x:22, y:353},
-			},
-			{
 				table: {	
 					widths:[20,32,'*','*','*','*','*',40],
 					body: [
@@ -273,9 +253,138 @@ export const generatePDF = async (
 				},
 	
 					alignment:'center',
-					absolutePosition:{x:30,y:375}
+					absolutePosition:{x:30,y:360}
+			},
+			{
+				text: ['PURPOSE: ', { text:'FOR REFERENCE AND RECORD PURPOSES',decoration: 'underline' }],
+				font:'ArialNarrow',
+				fontSize: 11,
+				bold: true,
+				alignment:'left',
+				absolutePosition: {x:30, y:615}
+			},
+			{
+				text: 'Issued in compliance with Executive Order No. 54, dated August 10, 1954 and in accordance with Circular No. 5 ',
+				font:'ArialNarrow',
+				fontSize: 8,
+				alignment:'left',
+				absolutePosition: {x:70, y:630}
+			},
+			{
+				//text: ['Date: ', { text: currentdate, decoration: 'underline' }]
+				//dae ko makuha so papanuhon so pag laag ning current date
+				text:'Date:',
+				font:'ArialNarrow',
+				fontSize: 8,
+				alignment:'left',
+				absolutePosition: {x:30, y:640}
+			},
+			{
+				stack: [
+					{text:	['CHECKED & VERIFIED BY:'],absolutePosition: {x: 30, y: 650}},
+					{ text: ['CERTIFIED CORRECT:'], absolutePosition: {x: 350, y: 650}},
+				],
+				font: 'ArialNarrow',
+				fontSize: 12,
+				alignment: 'left',
+			},
+			{
+				stack: [
+					{text:	[`${VeriBy.HRMOII}`],absolutePosition: {x: 100, y: 685}},
+					{ text: [`${VeriBy.admin}`], absolutePosition: {x: 450, y: 685}},
+				],
+				font: 'ArialNarrow',
+				fontSize: 12,
+				alignment: 'left',
+				bold:true
 			},
 
+			{
+				canvas: [
+					{ type: 'line', x1: 0, y1: 370, x2: 170, y2: 370 },
+					{ type: 'line', x1: 330, y1: 370, x2: 500, y2: 370 }
+				  ],
+			},
+			{
+				stack: [
+					{text:	['Administrative Officer IV (HRMO II)'],absolutePosition: {x: 60, y: 700}},
+					{ text: ['Administrative'], absolutePosition: {x: 450, y: 700}},
+				],
+				font:'ArialNarrow',
+				fontSize: 8,
+				italics: true
+			},
+			{
+				text:['Note: ',{text: 'Subject to review and correction and/or adjustement if found not in order',bold:false}],
+				bold:true,
+				alignment: 'right',
+				fontSize: 8,
+				font: 'ArialNarrow',
+				absolutePosition:{x: 400,y:720}
+			},
+			{
+				canvas:[{type: 'line',x1: 15, y1: 40, x2: 520, y2: 45 }],
+				alignment: 'center'
+			},
+			{
+				image: 'src/lib/assets/images/DepEd-MATATAG_BagongPilipinas.png',
+				alignment: 'left',
+				height: 100,
+				width: 200,
+				absolutePosition: {x:30,y:740}
+			},
+			{
+				image: 'src/lib/assets/images/deped-official-seal.png',
+				alignment: 'left',
+				height: 98,
+				width: 98,
+				absolutePosition: {x:245,y:740}
+			},
+
+			{
+				image: 'src/lib/assets/images/SDO.png',
+				alignment: 'right',
+				height: 50,
+				width: 100,
+				absolutePosition: {x: 20, y:755}
+			},
+
+			{
+				image: 'src/lib/assets/icons/home.png', absolutePosition:{x:360, y:745},
+				height: 18,
+				width:	18,
+				
+			},
+			{
+				image: 'src/lib/assets/icons/phone.png', absolutePosition:{x:360, y:765},
+				height: 18,
+				width:	18,
+			},
+			{
+				image: 'src/lib/assets/icons/mail.png', absolutePosition:{x:360, y:785},
+				height: 18,
+				width:	18,
+			},
+			{
+				image: 'src/lib/assets/icons/www.png', absolutePosition:{x:360, y:805},
+				height: 18,
+				width:	18,
+			},
+			{
+				stack: [
+					{text:	[`Purok 3, Rawis Legazpi City`],absolutePosition: {x: 390, y: 750}},
+					{ text: [`(052) 742-8227`], absolutePosition: {x: 390, y: 770}},
+					{text:	[`legazpi.city@deped.gov.ph`],absolutePosition: {x: 390, y: 785}},
+					{ text: [`https://legazpicity.deped.gov.ph`], absolutePosition: {x: 390, y: 792.50}},//dae ko naayos so spacing
+				],
+				font: 'ArialNarrow',
+				fontSize: 8,
+				alignment: 'left',
+				italics: true,
+			},
+			
+			
+			
 			
 		],
 		styles: {
