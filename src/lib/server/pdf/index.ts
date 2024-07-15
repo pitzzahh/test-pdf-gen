@@ -1,13 +1,11 @@
 import PdfPrinter from 'pdfmake';
-import depedLogo from '$lib/assets/images/deped-official-seal.png';
 import blobStream, { type IBlobStream } from 'blob-stream';
 import type {
 	TDocumentDefinitions,
 	TDocumentInformation,
 	TFontDictionary
 } from 'pdfmake/interfaces';
-import { text } from '@sveltejs/kit';
-import type { EmployeeInfo, ServiceRecord } from '$lib/types';
+import type { EmployeeInfo, ServiceRecord, VerifiedBy} from '$lib/types';
 
 const fonts: TFontDictionary = {
 	Roboto: {
@@ -53,19 +51,29 @@ const fonts: TFontDictionary = {
 	},
 	ZapfDingbats: {
 		normal: 'ZapfDingbats'
+	},
+	ArialNarrow:{
+		normal: 'src/lib/assets/fonts/arial-narrow.ttf',
+		bold: 'src/lib/assets/fonts/arial-narrow-bold.ttf',
+		italics: 'src/lib/assets/fonts/arial-narrow-italic.ttf'
 	}
 };
 
-// format of the pdf  
 
+type Alignment = 'center' | 'right'
+type TableData = {
+	text: string,
+	alignment: Alignment
+}
 
 const printer = new PdfPrinter(fonts);
 
 export const generatePDF = async (
 	doc: ServiceRecord,
 	info: EmployeeInfo,
-
-	metadata?: TDocumentInformation
+	VeriBy: VerifiedBy,
+	data: TableData[][],
+	metadata?: TDocumentInformation,
 ): Promise<Blob> => {
 	const file: TDocumentDefinitions = {
 		info: metadata,
@@ -77,6 +85,7 @@ export const generatePDF = async (
 				height: 100,
 				width: 100
 			},
+
 			{
 				text: 'Reupublic of the philippines',
 				font: 'OldEnglish',
@@ -105,7 +114,10 @@ export const generatePDF = async (
 				bold: true,
 				alignment: 'center'
 			},
-			'_____________________________________________________________________________________',
+			{
+				canvas:[{type: 'line',x1: 15, y1: 0, x2: 520, y2: 0 }],
+				alignment: 'center'
+			},
 			{
 				text: 'SERVICE RECORD',
 				font: 'Times',
@@ -117,7 +129,7 @@ export const generatePDF = async (
 			},
 			{
 				text: '(To be accomplished by the employer)',
-				font: 'Courier',
+				font: 'ArialNarrow',
 				fontSize: 8,
 				alignment: 'center',
 				italics: true
@@ -143,13 +155,13 @@ export const generatePDF = async (
 				bold: true,
 				fontSize: 14,
 				alignment: 'left',
-				absolutePosition: {x: 30, y:300}
+				absolutePosition: {x: 30, y:280}
 			},
 			{
 				stack: [
-					{text:	[`${info.lastName}`],absolutePosition: {x: 100, y: 303}},
-					{ text: [`${info.firstName}`], absolutePosition: {x: 220, y: 303}},
-					{ text: [`${info.middleName}`], absolutePosition: {x: 350, y: 303}},
+					{text:	[`${info.lastName}`],absolutePosition: {x: 100, y: 280}},
+					{ text: [`${info.firstName}`], absolutePosition: {x: 220, y: 280}},
+					{ text: [`${info.middleName}`], absolutePosition: {x: 350, y: 280}},
 
 				],
 				fontSize: 12,
@@ -157,18 +169,18 @@ export const generatePDF = async (
                 marginBottom: 5,
 			},
 			{
-				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:295},italics: true, alignment: 'right'
+				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:285},italics: true, alignment: 'right'
 			},
 			{
-				canvas:[{type: 'line',x1: 50, y1: 17, x2: 400, y2: 17 }]
+				canvas:[{type: 'line',x1: 50, y1: 9.50, x2: 400, y2: 9.50 }]
 			},
 			{
 				stack: [
-					{text:	[`(Surname)`],absolutePosition: {x: 100, y: 316.50}},
-					{ text: [`(Given Name)`], absolutePosition: {x: 220, y: 316.50}},
-					{ text: [`(Middle Name)`], absolutePosition: {x: 350, y: 316.50}},
+					{text:	[`(Surname)`],absolutePosition: {x: 100, y: 299}},
+					{ text: [`(Given Name)`], absolutePosition: {x: 220, y: 299}},
+					{ text: [`(Middle Name)`], absolutePosition: {x: 350, y: 299}},
 				],
-				font: 'Courier',
+				font: 'ArialNarrow',
 				fontSize: 8,
 				alignment: 'left',
 				italics: true,
@@ -178,32 +190,32 @@ export const generatePDF = async (
 				bold: true,
 				fontSize: 14,
 				alignment: 'left',
-				absolutePosition: {x: 30, y:325}
+				absolutePosition: {x: 30, y:312}
 			},
 			{
 				stack: [
-					{text:	info.birthdate.toISOString(),absolutePosition: {x: 100, y: 327}},
-					{ text: [`${info.placeOfBirth}`], absolutePosition: {x: 280, y: 327}},
+					{text:	info.birthdate.toLocaleDateString(),absolutePosition: {x: 100, y: 312}},
+					{ text: [`${info.placeOfBirth}`], absolutePosition: {x: 280, y: 312}},
 				],
 				fontSize: 12,
 				alignment: 'left',
                 marginBottom: 5,	
 			},
 			{
-				canvas:[{type: 'line',x1: 50, y1: 20, x2: 400, y2: 20 }]
+				canvas:[{type: 'line',x1: 50, y1: 25, x2: 400, y2: 25 }]
 			},
 			{
 				stack: [
-					{text:	[`(Date)`],absolutePosition: {x: 100, y: 340}},
-					{ text: [`(Place)`], absolutePosition: {x: 280, y: 340}},
+					{text:	[`(Date)`],absolutePosition: {x: 100, y: 330}},
+					{ text: [`(Place)`], absolutePosition: {x: 280, y: 330}},
 				],
-				font: 'Courier',
+				font: 'ArialNarrow',
 				fontSize: 8,
 				alignment: 'left',
 				italics: true,
 			},
 			{
-				text:'(Date herein should be checked from birth or baptismal certificate or other reliable documents.)', fontSize: 7, absolutePosition: {x:430, y:317},italics: true, alignment: 'right'
+				text:'(Date herein should be checked from birth or baptismal certificate or other reliable documents.)', fontSize: 7, absolutePosition: {x:430, y:306},italics: true, alignment: 'right'
 			},
 			{
 				stack: [
@@ -211,12 +223,168 @@ export const generatePDF = async (
 					{text: 'each line of which is supported by appointment and other papers actually issued by this office and approved by the authorities concerned'}
 
 				],
-				font: 'Calibri',
+				font: 'ArialNarrow',
 				fontSize: 9,
 				alignment: 'center',
-				absolutePosition:{x:22, y:353}
+				absolutePosition:{x:22, y:340}
+			},
+			{
+				table: {	
+					widths:[20,32,'*','*','*','*','*',40],
+					body: [
+						[{text:'SERVICE', colSpan:2, font:'ArialNarrow',fontSize:11,alignment:'center', bold:true}, {},
+						 {text:'RECORD OF APPOINTMENT',colSpan:3,font:'ArialNarrow',fontSize:11, alignment:'center',bold:true},{},{},
+						 {text:'OFFICE/ENTITY',alignment:'center',font:'ArialNarrow',fontSize:11, bold:true},
+						 {text:'\nSOURCE\nOF\nFUND',rowSpan:3,font:'ArialNarrow', alignment:'center',fontSize:11, bold:true},
+						 {text:'\n\nREMARKS', rowSpan:3,font:'ArialNarrow', alignment:'center',fontSize:11, bold:true}
+						],
+						[{text:'Inclusive Date', colSpan:2,alignment:'center'},{},
+						 {text:'\nPOSITON', rowSpan:2,alignment:'center'}, 
+						 {text:'STATUS'},
+						 {text:'SALARY'},
+						 {text:'DIV/STATION/PLACE\nOF\nASSIGNMENT', rowSpan:2, alignment:'center'},{},{}
+						],
+						[{text:'TO',alignment:'center'},
+						 {text:'FROM',alignment:'center'},{},
+						 {text:'1',alignment:'center'},{text:'2',alignment:'center'	},{},{},{}
+						],
+						...data
+					]
+				},
+	
+					alignment:'center',
+					absolutePosition:{x:30,y:360}
+			},
+			{
+				text: ['PURPOSE: ', { text:'FOR REFERENCE AND RECORD PURPOSES',decoration: 'underline' }],
+				font:'ArialNarrow',
+				fontSize: 11,
+				bold: true,
+				alignment:'left',
+				absolutePosition: {x:30, y:615}
+			},
+			{
+				text: 'Issued in compliance with Executive Order No. 54, dated August 10, 1954 and in accordance with Circular No. 5 ',
+				font:'ArialNarrow',
+				fontSize: 8,
+				alignment:'left',
+				absolutePosition: {x:70, y:630}
+			},
+			{
+				// TODO: text: ['Date: ', { text: currentdate, decoration: 'underline' }]
+				
+				text: ['Date: ', { text: new Date().toLocaleDateString(), decoration: 'underline' }],
+				font:'ArialNarrow',
+				fontSize:11,
+				alignment:'left',
+				absolutePosition: {x:30, y:640}
+			},
+			{
+				stack: [
+					{text:	['CHECKED & VERIFIED BY:'],absolutePosition: {x: 40, y: 655}},
+					{text: ['CERTIFIED CORRECT:'], absolutePosition: {x: 370, y: 655}},
+				],
+				font: 'ArialNarrow',
+				fontSize: 12,
+				alignment: 'left',
+			},
+			{
+				stack: [
+					{text:	[`${VeriBy.HRMOII}`],absolutePosition: {x: 100, y: 685}},
+					{ text: [`${VeriBy.admin}`], absolutePosition: {x: 450, y: 685}},
+				],
+				font: 'ArialNarrow',
+				fontSize: 12,
+				alignment: 'left',
+				bold:true
 			},
 
+			{
+				canvas: [
+					{ type: 'line', x1: 0, y1: 370, x2: 170, y2: 370 },
+					{ type: 'line', x1: 330, y1: 370, x2: 500, y2: 370 }
+				  ],
+			},
+			{
+				stack: [
+					{text:	['Administrative Officer IV (HRMO II)'],absolutePosition: {x: 60, y: 700}},
+					{ text: ['Administrative'], absolutePosition: {x: 450, y: 700}},
+				],
+				font:'ArialNarrow',
+				fontSize: 8,
+				italics: true
+			},
+			{
+				text:['Note: ',{text: 'Subject to review and \ncorrection and/or adjustement if found not in order',bold:false}],
+				bold:true,
+			//	alignment: 'right',
+				fontSize: 8,
+				font: 'ArialNarrow',
+				absolutePosition:{x: 350,y:715}
+			},
+			{
+				canvas:[{type: 'line',x1: 15, y1: 40, x2: 470, y2: 45 }],
+				alignment: 'center'
+			},
+			{
+				image: 'src/lib/assets/images/DepEd-MATATAG_BagongPilipinas.png',
+				alignment: 'left',
+				height: 100,
+				width: 200,
+				absolutePosition: {x:30,y:740}
+			},
+			{
+				image: 'src/lib/assets/images/deped-official-seal.png',
+				alignment: 'left',
+				height: 98,
+				width: 98,
+				absolutePosition: {x:245,y:740}
+			},
+
+			{
+				image: 'src/lib/assets/images/SDO.png',
+				alignment: 'right',
+				height: 50,
+				width: 100,
+				absolutePosition: {x: 20, y:755}
+			},
+
+			{
+				image: 'src/lib/assets/icons/home.png', absolutePosition:{x:360, y:745},
+				height: 18,
+				width:	18,
+				
+			},
+			{
+				image: 'src/lib/assets/icons/phone.png', absolutePosition:{x:360, y:765},
+				height: 18,
+				width:	18,
+			},
+			{
+				image: 'src/lib/assets/icons/mail.png', absolutePosition:{x:360, y:785},
+				height: 18,
+				width:	18,
+			},
+			{
+				image: 'src/lib/assets/icons/www.png', absolutePosition:{x:360, y:805},
+				height: 18,
+				width:	18,
+			},
+			{
+				stack: [
+					{text:	[`Purok 3, Rawis Legazpi City`],absolutePosition: {x: 390, y: 750}},
+					{ text: [`(052) 742-8227`], absolutePosition: {x: 390, y: 770}},
+					{text:	[`legazpi.city@deped.gov.ph`],absolutePosition: {x: 390, y: 785}},
+					{ text: [`https://legazpicity.deped.gov.ph`], absolutePosition: {x: 390, y: 792.50}},//dae ko naayos so spacing
+				],
+				font: 'ArialNarrow',
+				fontSize: 8,
+				alignment: 'left',
+				italics: true,
+			},
+			
+			
+			
 			
 		],
 		styles: {
@@ -235,6 +403,9 @@ export const generatePDF = async (
 			small: {
 				fontSize: 8
 			},
+			table: {
+				font: 'ArialNarrow'
+			}
 	
 		},
 		defaultStyle: {
