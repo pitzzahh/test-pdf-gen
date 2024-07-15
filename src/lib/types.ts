@@ -17,6 +17,11 @@ export type Service ={
 
 }
 
+export type VerifiedBy = {
+    HRMOII:string;
+    admin:string;
+}
+
 export type RecordAppointment = {
     position: string;
     status: string;
@@ -34,4 +39,5 @@ export type SourceOfFund ={
 export type Remarks ={
     remarks: string;
 }
+
 // create types for values needed in service record
