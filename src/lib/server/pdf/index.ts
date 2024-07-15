@@ -169,7 +169,7 @@ export const generatePDF = async (
                 marginBottom: 5,
 			},
 			{
-				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:279},italics: true, alignment: 'right'
+				text:'(If married woman, give also the maiden name)', fontSize: 7, absolutePosition: {x:400, y:285},italics: true, alignment: 'right'
 			},
 			{
 				canvas:[{type: 'line',x1: 50, y1: 9.50, x2: 400, y2: 9.50 }]
@@ -194,7 +194,7 @@ export const generatePDF = async (
 			},
 			{
 				stack: [
-					{text:	info.birthdate.toISOString(),absolutePosition: {x: 100, y: 312}},
+					{text:	info.birthdate.toLocaleDateString(),absolutePosition: {x: 100, y: 312}},
 					{ text: [`${info.placeOfBirth}`], absolutePosition: {x: 280, y: 312}},
 				],
 				fontSize: 12,
@@ -271,18 +271,18 @@ export const generatePDF = async (
 				absolutePosition: {x:70, y:630}
 			},
 			{
-				//text: ['Date: ', { text: currentdate, decoration: 'underline' }]
-				//dae ko makuha so papanuhon so pag laag ning current date
-				text:'Date:',
+				// TODO: text: ['Date: ', { text: currentdate, decoration: 'underline' }]
+				
+				text: ['Date: ', { text: new Date().toLocaleDateString(), decoration: 'underline' }],
 				font:'ArialNarrow',
-				fontSize: 8,
+				fontSize:11,
 				alignment:'left',
 				absolutePosition: {x:30, y:640}
 			},
 			{
 				stack: [
-					{text:	['CHECKED & VERIFIED BY:'],absolutePosition: {x: 30, y: 650}},
-					{ text: ['CERTIFIED CORRECT:'], absolutePosition: {x: 350, y: 650}},
+					{text:	['CHECKED & VERIFIED BY:'],absolutePosition: {x: 40, y: 655}},
+					{text: ['CERTIFIED CORRECT:'], absolutePosition: {x: 370, y: 655}},
 				],
 				font: 'ArialNarrow',
 				fontSize: 12,
@@ -315,15 +315,15 @@ export const generatePDF = async (
 				italics: true
 			},
 			{
-				text:['Note: ',{text: 'Subject to review and correction and/or adjustement if found not in order',bold:false}],
+				text:['Note: ',{text: 'Subject to review and \ncorrection and/or adjustement if found not in order',bold:false}],
 				bold:true,
-				alignment: 'right',
+			//	alignment: 'right',
 				fontSize: 8,
 				font: 'ArialNarrow',
-				absolutePosition:{x: 400,y:720}
+				absolutePosition:{x: 350,y:715}
 			},
 			{
-				canvas:[{type: 'line',x1: 15, y1: 40, x2: 520, y2: 45 }],
+				canvas:[{type: 'line',x1: 15, y1: 40, x2: 470, y2: 45 }],
 				alignment: 'center'
 			},
 			{
